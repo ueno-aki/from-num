@@ -1,9 +1,54 @@
+//! Attribute macro,implementing the From trait for your Enum.
+//! 
+//! ```rust
+//! use from_num::from_num;
+//! #[derive(Debug,PartialEq)]
+//! #[from_num(usize)]
+//! pub enum VecLen {
+//!     Zero,
+//!     One,
+//!     Two,
+//!     Three,
+//!     Four,
+//!     Five,
+//! }
+//! pub fn get_from_number() {
+//!     let vec = vec![0,0,0,1];
+//!     assert_eq!(VecLen::Four,VecLen::from(vec.len());
+//! }
+//! 
+//! ```
+
 use proc_macro::{TokenStream, TokenTree};
 use proc_macro2::Ident;
 use quote::ToTokens;
 use syn::{parse_macro_input, Data, DeriveInput};
 extern crate proc_macro;
 
+/// Implements the From trait for your Enum.
+///
+/// # Examples
+/// 
+/// ```rust
+/// use from_num::from_num;
+/// #[derive(Debug,PartialEq)]
+/// #[from_num(i8,u64)]
+/// enum Planet {
+///     Mercury,
+///     Venus,
+///     Earth,
+///     Mars,
+///     Jupiter = 0b1000,
+///     Saturn,
+///     Uranus = 0xff,
+///     Neptune
+/// }
+/// pub fn get_from_number() {
+///     assert_eq!(Planet::Earth,Planet::from(2 as i8));
+///     assert_eq!(Planet::Jupiter,Planet::from(0b1000 as i8));
+///     assert_eq!(Planet::Neptune,Planet::from(256 as u64));
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn from_num(attrs: TokenStream, item: TokenStream) -> TokenStream {
     let attrs = attrs

@@ -2,15 +2,16 @@
 name = "from-num"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "Attribute macro #[from_num(...)]"
+license = "MIT"
+repository = "https://github.com/ueno-aki/from-num"
 
 [dependencies]
-paste = "*"
-seq-macro = "*"
-proc-macro2 = "*"
-syn = "*"
-quote = "*"
+paste = "1.0.14"
+seq-macro = "0.3.5"
+proc-macro2 = "1.0.69"
+syn = "2.0.38"
+quote = "1.0.33"
 
 [lib]
 proc-macro = true
