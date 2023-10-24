@@ -87,7 +87,7 @@ fn num_traits(name: &Ident, arms: &str, nums: &[TokenTree]) -> String {
     let mut code = String::new();
     for token in nums.iter() {
         code += &format! {
-            r#"impl {0} {{ fn from_{2}(value:{2}) -> anyhow::Result<Self> {{ match value {{ {1}_ => Err(anyhow::anyhow!("[enum {0}] Failed convertion from {{}}",value)) }} }} }}"#,
+            r#"impl {0} {{ pub fn from_{2}(value:{2}) -> anyhow::Result<Self> {{ match value {{ {1}_ => Err(anyhow::anyhow!("[enum {0}] Failed convertion from {{}}",value)) }} }} }}"#,
             name,
             arms,
             token.to_string(),
