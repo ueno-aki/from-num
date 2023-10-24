@@ -3,20 +3,21 @@
 //! ```rust
 //! use from_num::from_num;
 //! #[derive(Debug,PartialEq)]
-//! #[from_num(usize)]
-//! pub enum VecLen {
-//!     Zero,
-//!     One,
-//!     Two,
-//!     Three,
-//!     Four,
-//!     Five,
+//! #[from_num(i8,u64,usize)]
+//! enum Planet {
+//!     Mercury,
+//!     Venus,
+//!     Earth,
+//!     Mars,
+//!     Jupiter = 0b1000,
+//!     Saturn,
+//!     Uranus = 0xff,
+//!     Neptune
 //! }
 //! pub fn get_from_number() {
-//!     let vec = vec![0,0,0,1];
-//!     assert_eq!(VecLen::Four,VecLen::from(vec.len());
+//!     assert_eq!(Planet::Jupiter,Planet::from_i8(0b1000 as i8).unwrap());
+//!     assert_eq!(Planet::Neptune,Planet::from_u64(256 as u64).unwrap());
 //! }
-//! 
 //! ```
 
 use proc_macro::{TokenStream, TokenTree};
@@ -32,7 +33,7 @@ extern crate proc_macro;
 /// ```rust
 /// use from_num::from_num;
 /// #[derive(Debug,PartialEq)]
-/// #[from_num(i8,u64)]
+/// #[from_num(i8,u64,usize)]
 /// enum Planet {
 ///     Mercury,
 ///     Venus,
@@ -44,9 +45,8 @@ extern crate proc_macro;
 ///     Neptune
 /// }
 /// pub fn get_from_number() {
-///     assert_eq!(Planet::Earth,Planet::from(2 as i8));
-///     assert_eq!(Planet::Jupiter,Planet::from(0b1000 as i8));
-///     assert_eq!(Planet::Neptune,Planet::from(256 as u64));
+///     assert_eq!(Planet::Jupiter,Planet::from_i8(0b1000 as i8).unwrap());
+///     assert_eq!(Planet::Neptune,Planet::from_u64(256 as u64).unwrap());
 /// }
 /// ```
 #[proc_macro_attribute]
@@ -69,7 +69,7 @@ pub fn from_num(attrs: TokenStream, item: TokenStream) -> TokenStream {
                     count = parse_with_prefix(&expr.into_token_stream().to_string());
                 };
                 arms += &format! {
-                    "{} => Self::{},",
+                    "{} => Ok(Self::{}),",
                     count,
                     var.ident.to_string()
                 };
@@ -87,7 +87,7 @@ fn num_traits(name: &Ident, arms: &str, nums: &[TokenTree]) -> String {
     let mut code = String::new();
     for token in nums.iter() {
         code += &format! {
-            r#"impl From<{2}> for {0} {{ fn from(value:{2}) -> Self {{ match value {{ {1}_ => panic!("Failed convertion from {{}}",value) }} }} }}"#,
+            r#"impl {0} {{ fn from_{2}(value:{2}) -> anyhow::Result<Self> {{ match value {{ {1}_ => Err(anyhow::anyhow!("[enum {0}] Failed convertion from {{}}",value)) }} }} }}"#,
             name,
             arms,
             token.to_string(),

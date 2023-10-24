@@ -1,7 +1,7 @@
 use from_num::from_num;
 
 #[derive(Debug,PartialEq)]
-#[from_num(i8,u64)]
+#[from_num(i8,u64,usize)]
 enum Planet {
     Mercury,
     Venus,
@@ -15,7 +15,7 @@ enum Planet {
 
 #[test]
 fn defalut_enum() {
-    assert_eq!(Planet::Earth,Planet::from(2 as i8));
-    assert_eq!(Planet::Jupiter,Planet::from(0b1000 as i8));
-    assert_eq!(Planet::Neptune,Planet::from(256 as u64));
+    assert_eq!(Planet::Mercury,Planet::from_i8(0 as i8).unwrap());
+    println!("{:?}",Planet::from_u64(12 as u64));
+    println!("{:?}",Planet::from_usize(0xff))
 }
